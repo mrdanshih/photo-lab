@@ -38,23 +38,33 @@ char* getFilenameInput(char* prompt) {
 	return filename;
 }
 
+void printSuccessFailMessage(int resultCode) {
+    if(resultCode == 0) {
+    	printf("Success!\n");
+    } else {
+    	printf("Failure!\n");
+    }
+}
 void executeCommand(int option, unsigned char R[WIDTH][HEIGHT],
 							    unsigned char G[WIDTH][HEIGHT],
 							    unsigned char B[WIDTH][HEIGHT]) {
 	switch(option) {
-		case 1:
+		case 1:		// Load File
 		{
 			char* filename = getFilenameInput("Please input the file name to load (no extension): ");
 			int result = LoadImage(filename, R, G, B);
 			free(filename);
-
-		    if(result == 0) {
-		    	printf("Success!\n");
-		    } else {
-		    	printf("Failure!\n");
-		    }
-
+			printSuccessFailMessage(result);
 		    break;
+		}
+
+		case 2:		// Save File
+		{
+			char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
+			int result = SaveImage(filename, R, G, B);
+			free(filename);
+			printSuccessFailMessage(result);
+			break;
 		}
 	}
 }
@@ -72,7 +82,6 @@ int main(int argc, char** argv) {
 		printf("Enter a numerical option: ");
 
 		if(fgets(input, INPUT_LIMIT, stdin) && sscanf(input, "%d", &option)) {
-			printf("Option chosen was: %d\n", option);
 			executeCommand(option, R, G, B);
 		} else {
 			printf("Invalid choice. Enter # from 1-15.\n");

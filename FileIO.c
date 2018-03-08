@@ -85,3 +85,41 @@ int LoadImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
     fclose(file);
     return 0;
 }
+
+int SaveImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
+              unsigned char G[WIDTH][HEIGHT], unsigned char B[WIDTH][HEIGHT])
+{
+	FILE* file;
+	char ftype[] = ".ppm";
+	char fname_full[SLEN];
+	strcpy(fname_full, fname);
+	strcat(fname_full, ftype);
+
+	file = fopen(fname_full, "w");
+
+	if(!file) {
+		printf("Cannot open file \"%s\" for writing!\n", fname);
+		return 1;
+	}
+
+	fprintf(file, "P6\n");
+	fprintf(file, "%d %d\n", WIDTH, HEIGHT);
+	fprintf(file, "255\n");
+
+	for(int y = 0; y < HEIGHT; ++y) {
+		for(int x = 0; x < WIDTH; ++x) {
+			fputc(R[x][y], file);
+			fputc(G[x][y], file);
+			fputc(B[x][y], file);
+		}
+	}
+
+	if(ferror(file)) {
+		printf("\nFile error while writing to file!\n");
+		return 2;
+	}
+
+	fclose(file);
+	printf("%s was saved, \n", fname_full);
+	return 0;
+}
