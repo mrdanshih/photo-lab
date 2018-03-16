@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Image.h"
 #include "Constants.h"
 
 /* read image from a file */

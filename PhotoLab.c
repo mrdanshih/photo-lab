@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "FileIO.h"
 #include "DIPS.h"
+#include "Image.h"
 #include "Constants.h"
 
 # define INPUT_LIMIT 100
@@ -66,6 +67,8 @@ void executeCommand(int option, unsigned char R[WIDTH][HEIGHT],
 			printSuccessFailMessage(result);
 			break;
 		}
+
+		case 3: BlackNWhite(R, G, B); break;
 	}
 }
 
@@ -74,7 +77,7 @@ int main(int argc, char** argv) {
 	unsigned char R[WIDTH][HEIGHT];
     unsigned char G[WIDTH][HEIGHT];
     unsigned char B[WIDTH][HEIGHT];
-
+	IMAGE* image = CreateImage(10, 10);
 	int option;
 	char input[INPUT_LIMIT];
 	do {
@@ -89,6 +92,16 @@ int main(int argc, char** argv) {
 		}
 
 	} while(option != 15);
+	
 
+	for(unsigned int y = 0; y < ImageHeight(image); ++y) {
+		for(unsigned int x = 0; x < ImageWidth(image); ++x) {
+			SetPixelR(image, x, y, x+y);
+			printf("%d%d%d ", GetPixelR(image, x, y), GetPixelG(image, x, y), GetPixelB(image, x, y));
+
+		}
+		printf("\n");
+	}
+	DeleteImage(image);
 	return 0;
 }
