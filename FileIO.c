@@ -41,19 +41,11 @@ IMAGE* LoadImage(const char* fname)
 		return NULL;
 	}
 
-	// Check width
+	// TODO: Rewrite this to use fgets instead?
+	
+	// Get width and height
 	fscanf(file, "%d", &width);
-	if(width != WIDTH) {
-		printf("\nUnsupported image width %d!\n", width);
-        return NULL;
-	}
-
-	//Check height
     fscanf(file, "%d", &height);
-    if (height != HEIGHT) {
-        printf("\nUnsupported image height %d!\n", height);
-        return NULL;
-    }
 
     //Check max value
     fscanf(file, "%d", &maxRGBVal);
@@ -72,8 +64,8 @@ IMAGE* LoadImage(const char* fname)
     IMAGE* image = CreateImage(width, height);
 
     // Now read the file contents
-    for(int y = 0; y < HEIGHT; ++y) {
-    	for(int x = 0; x < WIDTH; ++x) {
+    for(int y = 0; y < height; ++y) {
+    	for(int x = 0; x < width; ++x) {
     		SetPixelR(image, x, y, fgetc(file));
     		SetPixelG(image, x, y, fgetc(file));
     		SetPixelB(image, x, y, fgetc(file));
@@ -107,11 +99,11 @@ int SaveImage(const char* fname, const IMAGE* image)
 	}
 
 	fprintf(file, "P6\n");
-	fprintf(file, "%d %d\n", WIDTH, HEIGHT);
+	fprintf(file, "%d %d\n", ImageWidth(image), ImageHeight(image));
 	fprintf(file, "255\n");
 
-	for(int y = 0; y < HEIGHT; ++y) {
-		for(int x = 0; x < WIDTH; ++x) {
+	for(int y = 0; y < ImageHeight(image); ++y) {
+		for(int x = 0; x < ImageWidth(image); ++x) {
 			fputc(GetPixelR(image, x, y), file);
 			fputc(GetPixelG(image, x, y), file);
 			fputc(GetPixelB(image, x, y), file);
@@ -124,6 +116,6 @@ int SaveImage(const char* fname, const IMAGE* image)
 	}
 
 	fclose(file);
-	printf("%s was saved, \n", fname_full);
+	printf("%s was saved.\n", fname_full);
 	return 0;
 }

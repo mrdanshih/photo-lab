@@ -1,6 +1,7 @@
 #ifndef FILE_IO_H
 #define FILE_IO_H
 
+#define MAX_LINE_LEN 100
 
 #include <stdio.h>
 #include <stdlib.h>

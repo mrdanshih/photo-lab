@@ -53,12 +53,12 @@ void SetPixelB(IMAGE* image, unsigned int x, unsigned int y, unsigned char b)
 	image->B[x + y * image->W] = b;
 }
 
-unsigned int ImageWidth(IMAGE* image)
+unsigned int ImageWidth(const IMAGE* image)
 {
 	return image->W;
 }
 
-unsigned int ImageHeight(IMAGE* image)
+unsigned int ImageHeight(const IMAGE* image)
 {
 	return image->H;
 }

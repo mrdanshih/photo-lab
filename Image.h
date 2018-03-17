@@ -33,9 +33,9 @@ void SetPixelG(IMAGE* image, unsigned int x, unsigned int y, unsigned char g);
 void SetPixelB(IMAGE* image, unsigned int x, unsigned int y, unsigned char b);
 
 /* Return the image's width in pixels */
-unsigned int ImageWidth(IMAGE* image);
+unsigned int ImageWidth(const IMAGE* image);
 
 /* Return the image's height in pixels */
-unsigned int ImageHeight(IMAGE* image);
+unsigned int ImageHeight(const IMAGE* image);
 
 #endif /* IMAGE_H */

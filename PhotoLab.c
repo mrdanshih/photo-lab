@@ -70,6 +70,11 @@ void executeCommand(int option, IMAGE** image) {
 
 		case 2:		// Save File
 		{
+			if(*image == NULL) {
+				printf("No image loaded to save!\n");
+				break;
+			}
+
 			char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
 			int result = SaveImage(filename, *image);
 			free(filename);
