@@ -30,10 +30,14 @@ char* getFilenameInput(char* prompt) {
 
 	printf("%s", prompt);
 	// Get file name.
-	fgets(filename, sizeof(filename), stdin); // 
+	fgets(filename, INPUT_LIMIT, stdin); // 
 	size_t last_index = strlen(filename) - 1;
 	if(filename[last_index] == '\n') {
 		filename[last_index] = '\0';
+	} else {
+		//Flush buffer
+		int ch;
+		while(((ch = getchar()) !='\n') && ch != EOF);
 	}
 
 	return filename;
@@ -46,38 +50,40 @@ void printSuccessFailMessage(int resultCode) {
     	printf("Failure!\n");
     }
 }
-void executeCommand(int option, unsigned char R[WIDTH][HEIGHT],
-							    unsigned char G[WIDTH][HEIGHT],
-							    unsigned char B[WIDTH][HEIGHT]) {
+
+void safeDeleteImage(IMAGE* image) {
+	if(image != NULL) {
+		DeleteImage(image);
+	}
+}
+
+void executeCommand(int option, IMAGE** image) {
 	switch(option) {
 		case 1:		// Load File
 		{
 			char* filename = getFilenameInput("Please input the file name to load (no extension): ");
-			int result = LoadImage(filename, R, G, B);
+			safeDeleteImage(*image);
+			*image = LoadImage(filename);
 			free(filename);
-			printSuccessFailMessage(result);
 		    break;
 		}
 
 		case 2:		// Save File
 		{
 			char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
-			int result = SaveImage(filename, R, G, B);
+			int result = SaveImage(filename, *image);
 			free(filename);
 			printSuccessFailMessage(result);
 			break;
 		}
 
-		case 3: BlackNWhite(R, G, B); break;
+		case 3: BlackNWhite(*image); break;
 	}
 }
 
 int main(int argc, char** argv) {
 	// the image
-	unsigned char R[WIDTH][HEIGHT];
-    unsigned char G[WIDTH][HEIGHT];
-    unsigned char B[WIDTH][HEIGHT];
-	IMAGE* image = CreateImage(10, 10);
+	IMAGE* image = NULL;
 	int option;
 	char input[INPUT_LIMIT];
 	do {
@@ -85,7 +91,7 @@ int main(int argc, char** argv) {
 		printf("Enter a numerical option: ");
 
 		if(fgets(input, INPUT_LIMIT, stdin) && sscanf(input, "%d", &option)) {
-			executeCommand(option, R, G, B);
+			executeCommand(option, &image);
 		} else {
 			printf("Invalid choice. Enter # from 1-15.\n");
 			option = 0;
@@ -93,15 +99,14 @@ int main(int argc, char** argv) {
 
 	} while(option != 15);
 	
+	// for(unsigned int y = 0; y < ImageHeight(image); ++y) {
+	// 	for(unsigned int x = 0; x < ImageWidth(image); ++x) {
+	// 		SetPixelR(image, x, y, x+y);
+	// 		printf("%d%d%d ", GetPixelR(image, x, y), GetPixelG(image, x, y), GetPixelB(image, x, y));
 
-	for(unsigned int y = 0; y < ImageHeight(image); ++y) {
-		for(unsigned int x = 0; x < ImageWidth(image); ++x) {
-			SetPixelR(image, x, y, x+y);
-			printf("%d%d%d ", GetPixelR(image, x, y), GetPixelG(image, x, y), GetPixelB(image, x, y));
-
-		}
-		printf("\n");
-	}
-	DeleteImage(image);
+	// 	}
+	// 	printf("\n");
+	// }
+	safeDeleteImage(image);
 	return 0;
 }

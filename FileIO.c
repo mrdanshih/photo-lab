@@ -2,6 +2,7 @@
 
 /*
 	Loads the image from given file name fname into the RGB arrays.
+	Return NULL upon failure, else an IMAGE*.
 	Returns 0 for success, >1 for different errors.
 
 	1 = some unknown error occurred
@@ -11,17 +12,17 @@
 	5 = unsupported image maximum value
 	6 = carriage return expected.
  */ 
-int LoadImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
-              unsigned char G[WIDTH][HEIGHT], unsigned char B[WIDTH][HEIGHT]) 
+IMAGE* LoadImage(const char* fname)
 {
 	FILE* file;
-	//PPM header 
+
+	//PPM header  - image details.
 	char fileType[SLEN];
 	int width, height, maxRGBVal;
 
 	// For dealing with file names.
-	char fname_temp[SLEN];
 	char ftype[] = ".ppm";
+	char fname_temp[strlen(ftype) + strlen(fname)];
 
 	strcpy(fname_temp, fname);
 	strcat(fname_temp, ftype);
@@ -30,68 +31,71 @@ int LoadImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
 
 	if(!file) {
 		printf("Cannot open file \"%s\" for reading!\n", fname);
-		return 1;
+		return NULL;
 	}
 
 	// Check header line 1 to be P6
 	fscanf(file, "%79s", fileType);
 	if(fileType[0] != 'P' || fileType[1] != '6' || fileType[2] != 0) {
 		printf("\nUnsupported file format!\n");
-		return 2;
+		return NULL;
 	}
 
 	// Check width
 	fscanf(file, "%d", &width);
 	if(width != WIDTH) {
 		printf("\nUnsupported image width %d!\n", width);
-        return 3;
+        return NULL;
 	}
 
 	//Check height
     fscanf(file, "%d", &height);
     if (height != HEIGHT) {
         printf("\nUnsupported image height %d!\n", height);
-        return 4;
+        return NULL;
     }
 
     //Check max value
     fscanf(file, "%d", &maxRGBVal);
     if (maxRGBVal != 255) {
         printf("\nUnsupported image maximum value %d!\n", maxRGBVal);
-        return 5;
+        return NULL;
     }
 
     //Ensure ends in carriage return
     if ('\n' != fgetc(file)) {
         printf("\nCarriage return expected!\n");
-        return 6;
+        return NULL;
     }
+
+    // Create an image struct for saving the image to
+    IMAGE* image = CreateImage(width, height);
 
     // Now read the file contents
     for(int y = 0; y < HEIGHT; ++y) {
     	for(int x = 0; x < WIDTH; ++x) {
-    		R[x][y] = fgetc(file);
-    		G[x][y] = fgetc(file);
-    		B[x][y] = fgetc(file);
+    		SetPixelR(image, x, y, fgetc(file));
+    		SetPixelG(image, x, y, fgetc(file));
+    		SetPixelB(image, x, y, fgetc(file));
     	}
     }
 
     if(ferror(file)) {
     	printf("\nFile error while reading from file!\n");
-        return 7;
+        return NULL;
     }
 
     printf("%s was read.\n", fname_temp);
     fclose(file);
-    return 0;
+ //   free(fname_temp);
+    return image;
 }
 
-int SaveImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
-              unsigned char G[WIDTH][HEIGHT], unsigned char B[WIDTH][HEIGHT])
+int SaveImage(const char* fname, const IMAGE* image)
 {
 	FILE* file;
 	char ftype[] = ".ppm";
-	char fname_full[SLEN];
+	char fname_full[strlen(ftype) + strlen(fname)];
 	strcpy(fname_full, fname);
 	strcat(fname_full, ftype);
 
@@ -108,9 +112,9 @@ int SaveImage(const char fname[SLEN], unsigned char R[WIDTH][HEIGHT],
 
 	for(int y = 0; y < HEIGHT; ++y) {
 		for(int x = 0; x < WIDTH; ++x) {
-			fputc(R[x][y], file);
-			fputc(G[x][y], file);
-			fputc(B[x][y], file);
+			fputc(GetPixelR(image, x, y), file);
+			fputc(GetPixelG(image, x, y), file);
+			fputc(GetPixelB(image, x, y), file);
 		}
 	}
 
