@@ -18,7 +18,7 @@ IMAGE* LoadImage(const char* fname)
 
 	//PPM header  - image details.
 	char fileType[SLEN];
-	int width, height, maxRGBVal;
+	int width = 0, height = 0, maxRGBVal = 0;
 
 	// For dealing with file names.
 	char ftype[] = ".ppm";
@@ -34,34 +34,49 @@ IMAGE* LoadImage(const char* fname)
 		return NULL;
 	}
 
-	// Check header line 1 to be P6
-	fscanf(file, "%79s", fileType);
-	if(fileType[0] != 'P' || fileType[1] != '6' || fileType[2] != 0) {
-		printf("\nUnsupported file format!\n");
-		return NULL;
+	// Read file parameters
+	char linebuf[MAX_LINE_LEN];
+	unsigned int parameter_index = 0; 
+
+	while(parameter_index < 3 && fgets(linebuf, sizeof(linebuf), file)) {
+		if(*linebuf == '#') continue;
+		
+		switch(parameter_index) {
+			// File type - 	Check header line 1 to be P6
+			case 0:
+				sscanf(linebuf, "%79s", fileType);
+				if(fileType[0] != 'P' || fileType[1] != '6' || fileType[2] != 0) {
+					printf("\nUnsupported file format!\n");
+					return NULL;
+				}
+
+			// Get width and height
+			case 1:
+				sscanf(linebuf, "%d %d", &width, &height);
+				break;
+
+			// Get max value
+			case 2:
+				sscanf(linebuf, "%d", &maxRGBVal);
+				// Check max value
+			    if (maxRGBVal != 255) {
+			        printf("\nUnsupported image maximum value %d!\n", maxRGBVal);
+			        return NULL;
+			    }
+				break;
+			default:
+				break;
+		}
+		++parameter_index;
 	}
-
-	// TODO: Rewrite this to use fgets instead?
-	
-	// Get width and height
-	fscanf(file, "%d", &width);
-    fscanf(file, "%d", &height);
-
-    //Check max value
-    fscanf(file, "%d", &maxRGBVal);
-    if (maxRGBVal != 255) {
-        printf("\nUnsupported image maximum value %d!\n", maxRGBVal);
-        return NULL;
-    }
-
-    //Ensure ends in carriage return
-    if ('\n' != fgetc(file)) {
-        printf("\nCarriage return expected!\n");
-        return NULL;
-    }
 
     // Create an image struct for saving the image to
     IMAGE* image = CreateImage(width, height);
+
+    if(!image) {
+    	printf("\nCould not create image!\n");
+    	return NULL;
+    }
 
     // Now read the file contents
     for(int y = 0; y < height; ++y) {

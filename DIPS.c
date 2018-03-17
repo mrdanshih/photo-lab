@@ -13,4 +13,7 @@ void BlackNWhite(IMAGE* image)
 			SetPixelB(image, x, y, avg_intensity);
 		}
 	}
+
+	printf("\"Black & White\" operations is done!\n");
 }
+

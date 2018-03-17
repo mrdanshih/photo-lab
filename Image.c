@@ -3,9 +3,13 @@
 IMAGE* CreateImage(unsigned int width, unsigned int height)
 {
 	IMAGE* image = malloc(sizeof(IMAGE));
+	if(image == NULL) return NULL;
+
 	image->R = calloc(width * height, sizeof(char));
 	image->G = calloc(width * height, sizeof(char));
 	image->B = calloc(width * height, sizeof(char));
+	if(image->R == NULL || image->G == NULL || image->B == NULL) return NULL;
+
 	image->W = width;
 	image->H = height;
 	return image;
@@ -13,13 +17,15 @@ IMAGE* CreateImage(unsigned int width, unsigned int height)
 
 void DeleteImage(IMAGE* image)
 {
-	free(image->R);
-	free(image->G);
-	free(image->B);
-	image->R = NULL;
-	image->G = NULL;
-	image->B = NULL;
-	free(image);
+	if(image != NULL) {
+		free(image->R);
+		free(image->G);
+		free(image->B);
+		image->R = NULL;
+		image->G = NULL;
+		image->B = NULL;
+		free(image);
+	}
 }
 
 unsigned char GetPixelR(const IMAGE* image, unsigned int x, unsigned int y)

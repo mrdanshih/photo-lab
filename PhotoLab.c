@@ -51,40 +51,48 @@ void printSuccessFailMessage(int resultCode) {
     }
 }
 
-void safeDeleteImage(IMAGE* image) {
-	if(image != NULL) {
-		DeleteImage(image);
+void executeLoadFileCommand(IMAGE** image) {
+	char* filename = getFilenameInput("Please input the file name to load (no extension): ");
+	IMAGE* newImage = NULL;
+	newImage = LoadImage(filename);
+
+	if(newImage != NULL) {
+		DeleteImage(*image);
+		*image = newImage;	
+	} else {
+		printf("Failed to load image.\n");
 	}
+
+	free(filename);
+
+}
+
+void executeSaveFileCommand(IMAGE** image) {
+	char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
+	int result = SaveImage(filename, *image);
+	free(filename);
+	printSuccessFailMessage(result);
 }
 
 void executeCommand(int option, IMAGE** image) {
+	// Check for NULL image for options that require a loaded image
+	if(option != 1 && option != 15 && *image == NULL) {
+		printf("No image loaded to perform this operation!\n");
+		return;
+	}
+
 	switch(option) {
 		case 1:		// Load File
-		{
-			char* filename = getFilenameInput("Please input the file name to load (no extension): ");
-			safeDeleteImage(*image);
-			*image = LoadImage(filename);
-			free(filename);
-		    break;
-		}
+			executeLoadFileCommand(image); break;
 
 		case 2:		// Save File
-		{
-			if(*image == NULL) {
-				printf("No image loaded to save!\n");
-				break;
-			}
+			executeSaveFileCommand(image); break;
 
-			char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
-			int result = SaveImage(filename, *image);
-			free(filename);
-			printSuccessFailMessage(result);
-			break;
-		}
-
-		case 3: BlackNWhite(*image); break;
+		case 3: 
+			BlackNWhite(*image); break;
 	}
 }
+
 
 int main(int argc, char** argv) {
 	// the image
@@ -104,14 +112,6 @@ int main(int argc, char** argv) {
 
 	} while(option != 15);
 	
-	// for(unsigned int y = 0; y < ImageHeight(image); ++y) {
-	// 	for(unsigned int x = 0; x < ImageWidth(image); ++x) {
-	// 		SetPixelR(image, x, y, x+y);
-	// 		printf("%d%d%d ", GetPixelR(image, x, y), GetPixelG(image, x, y), GetPixelB(image, x, y));
-
-	// 	}
-	// 	printf("\n");
-	// }
-	safeDeleteImage(image);
+	DeleteImage(image);
 	return 0;
 }
