@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "Image.h"
+#include "stdbool.h"
 #include "Constants.h"
 
 /* Change color image to black and white */

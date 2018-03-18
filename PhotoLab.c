@@ -6,7 +6,8 @@
 
 # define INPUT_LIMIT 100
 
-void printMenu() {
+void printMenu()
+{
 	printf("--------------------------------\n");
 	printf(" 1:  Load a PPM image\n"
 			" 2:  Save an image in PPM format\n"
@@ -25,7 +26,8 @@ void printMenu() {
 			" 15: Exit\n");
 }
 
-char* getFilenameInput(char* prompt) {
+char* getFilenameInput(char* prompt)
+{	
 	char* filename = (char*) malloc(INPUT_LIMIT * sizeof(char));
 
 	printf("%s", prompt);
@@ -43,7 +45,23 @@ char* getFilenameInput(char* prompt) {
 	return filename;
 }
 
-void printSuccessFailMessage(int resultCode) {
+int getRGBInput(char* prompt)
+{ 
+	int value;
+	char input[INPUT_LIMIT];
+	while(1) {
+		printf("%s", prompt);
+		if(fgets(input, INPUT_LIMIT, stdin) && sscanf(input, "%d", &value) && value >= 0 && value <= 255) {
+				return value;
+		} else {
+			printf("Invalid input. Enter a valid value from 0-255.\n");
+			value = 0;
+		}
+	}
+}
+
+void printSuccessFailMessage(int resultCode)
+{
     if(resultCode == 0) {
     	printf("Success!\n");
     } else {
@@ -51,7 +69,8 @@ void printSuccessFailMessage(int resultCode) {
     }
 }
 
-void executeLoadFileCommand(IMAGE** image) {
+void executeLoadFileCommand(IMAGE** image)
+{
 	char* filename = getFilenameInput("Please input the file name to load (no extension): ");
 	IMAGE* newImage = NULL;
 	newImage = LoadImage(filename);
@@ -67,14 +86,30 @@ void executeLoadFileCommand(IMAGE** image) {
 
 }
 
-void executeSaveFileCommand(IMAGE** image) {
+void executeSaveFileCommand(IMAGE** image)
+{
 	char* filename = getFilenameInput("Please input the file name to save to (no extension): ");
 	int result = SaveImage(filename, *image);
 	free(filename);
 	printSuccessFailMessage(result);
 }
 
-void executeCommand(int option, IMAGE** image) {
+void executeColorFilterCommand(IMAGE** image)
+{
+	int red_target = getRGBInput("Enter target Red component of color: ");
+	int green_target = getRGBInput("Enter target Green component of color: ");
+	int blue_target = getRGBInput("Enter target Blue component of color: ");
+	int threshold = getRGBInput("Enter threshold for the color difference: ");
+	int red_replace = getRGBInput("Enter replacement Red component of color: ");
+	int green_replace = getRGBInput("Enter replacement Green component of color: ");
+	int blue_replace = getRGBInput("Enter replacement Blue component of color: ");
+	ColorFilter(*image, red_target, green_target, blue_target, threshold, red_replace, green_replace, blue_replace);
+	printf("\"Color Filter\" operation is done!\n");
+}
+
+
+void executeCommand(int option, IMAGE** image)
+{
 	// Check for NULL image for options that require a loaded image
 	if(option != 1 && option != 15 && *image == NULL) {
 		printf("No image loaded to perform this operation!\n");
@@ -89,12 +124,23 @@ void executeCommand(int option, IMAGE** image) {
 			executeSaveFileCommand(image); break;
 
 		case 3: 
-			BlackNWhite(*image); break;
+			BlackNWhite(*image); 
+			printf("\"Black & White\" operation is done!\n");
+			break;
+
+		case 4:
+			Negative(*image);
+			printf("\"Negative\" operation is done!\n");
+			break;
+
+		case 5:
+			executeColorFilterCommand(image);
 	}
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	// the image
 	IMAGE* image = NULL;
 	int option;

@@ -89,12 +89,12 @@ IMAGE* LoadImage(const char* fname)
 
     if(ferror(file)) {
     	printf("\nFile error while reading from file!\n");
+    	free(image);
         return NULL;
     }
 
     printf("%s was read.\n", fname_temp);
     fclose(file);
- //   free(fname_temp);
     return image;
 }
 
