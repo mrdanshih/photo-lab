@@ -38,4 +38,9 @@ unsigned int ImageWidth(const IMAGE* image);
 /* Return the image's height in pixels */
 unsigned int ImageHeight(const IMAGE* image);
 
+/* Copies pixels from src to dest. Both image dimensions must be the same,
+ * else there will be errors.
+ */
+void CopyImage(IMAGE* src, IMAGE* dest);
+
 #endif /* IMAGE_H */

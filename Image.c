@@ -68,3 +68,15 @@ unsigned int ImageHeight(const IMAGE* image)
 {
 	return image->H;
 }
+
+void CopyImage(IMAGE* dest, IMAGE* src)
+{
+	for(int y = 0; y < ImageHeight(dest); ++y) {
+		for(int x = 0; x < ImageWidth(dest); ++x) {
+			SetPixelR(dest, x, y, GetPixelR(src, x, y));
+			SetPixelG(dest, x, y, GetPixelG(src, x, y));
+			SetPixelB(dest, x, y, GetPixelB(src, x, y));
+		}
+	}
+}
+

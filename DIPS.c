@@ -1,6 +1,5 @@
 #include "DIPS.h"
 
-/* Change color image to black and white */
 void BlackNWhite(IMAGE* image)
 {
 	for(int y = 0; y < ImageHeight(image); ++y) {
@@ -24,7 +23,8 @@ void Negative(IMAGE* image)
 	}
 }
 
-bool inRange(int lower, int upper, int target) {
+bool inRange(int lower, int upper, int target)
+{
 	return lower <= target && target <= upper;
 }
 
@@ -33,9 +33,9 @@ void ColorFilter(IMAGE* image, int target_r, int target_g, int target_b, int thr
 {
 	for(int y = 0; y < ImageHeight(image); ++y) {
 		for(int x = 0; x < ImageWidth(image); ++x) {
-			unsigned char curr_r = GetPixelR(image, x, y);
-			unsigned char curr_g = GetPixelG(image, x, y);
-			unsigned char curr_b = GetPixelB(image, x, y);
+			int curr_r = GetPixelR(image, x, y);
+			int curr_g = GetPixelG(image, x, y);
+			int curr_b = GetPixelB(image, x, y);
 
 			if(inRange(target_r - threshold, target_r + threshold, curr_r) &&
 			   inRange(target_g - threshold, target_g + threshold, curr_g) &&
@@ -46,5 +46,50 @@ void ColorFilter(IMAGE* image, int target_r, int target_g, int target_b, int thr
 			}
 		}
 	}
+}
+
+bool inBounds(IMAGE* image, int x, int y)
+{
+	return 0 <= x && x < ImageWidth(image) && 0 <= y && y < ImageHeight(image);
+}
+
+int edgeNeighborSum(IMAGE* image, int target_x, int target_y, char color_channel)
+{
+	// Color channel should be 'R, 'G', or 'B'
+	int sum = 0;
+
+	for(int y = target_y - 1; y <= target_y + 1; ++y) {
+		for(int x = target_x - 1; x <= target_x + 1; ++x) {
+			int adjusted_pixel;
+
+			if(inBounds(image, x, y)) {
+				if(color_channel == 'R') 		adjusted_pixel = GetPixelR(image, x, y);
+				else if(color_channel == 'G') 	adjusted_pixel = GetPixelG(image, x, y);
+				else if(color_channel == 'B') 	adjusted_pixel = GetPixelB(image, x, y);
+
+				sum += (x == target_x && y == target_y) ? 8 * adjusted_pixel : -1 * adjusted_pixel;
+			}
+		}
+	} 
+
+	if(sum < 0) 		return 0;
+	else if(sum > 255)	return 255;
+	return sum;
+}
+
+void Edge(IMAGE* image)
+{
+	IMAGE* tempImage = CreateImage(ImageWidth(image), ImageHeight(image));
+
+	for(int y = 0; y < ImageHeight(image); ++y) {
+		for(int x = 0; x < ImageWidth(image); ++x) {
+			SetPixelR(tempImage, x, y, edgeNeighborSum(image, x, y, 'R'));
+			SetPixelG(tempImage, x, y, edgeNeighborSum(image, x, y, 'G'));
+			SetPixelB(tempImage, x, y, edgeNeighborSum(image, x, y, 'B'));
+		}
+	}
+
+	CopyImage(image, tempImage);
+	DeleteImage(tempImage);
 }
 

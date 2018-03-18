@@ -123,7 +123,7 @@ void executeCommand(int option, IMAGE** image)
 		case 2:		// Save File
 			executeSaveFileCommand(image); break;
 
-		case 3: 
+		case 3: 		
 			BlackNWhite(*image); 
 			printf("\"Black & White\" operation is done!\n");
 			break;
@@ -134,7 +134,12 @@ void executeCommand(int option, IMAGE** image)
 			break;
 
 		case 5:
-			executeColorFilterCommand(image);
+			executeColorFilterCommand(image); break;
+
+		case 6:
+			Edge(*image);
+			printf("\"Edge\" operation is done!\n");
+			break;
 	}
 }
 
