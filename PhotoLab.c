@@ -140,6 +140,11 @@ void executeCommand(int option, IMAGE** image)
 			Edge(*image);
 			printf("\"Edge\" operation is done!\n");
 			break;
+
+		case 7:
+			Shuffle(*image);
+			printf("Shuffle operation is done!\n");
+			break;
 	}
 }
 

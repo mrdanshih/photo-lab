@@ -5,8 +5,14 @@ all: PhotoLab
 PhotoLab: PhotoLab.o DIPS.o FileIO.o Image.o
 	gcc $(CFLAGS) -o PhotoLab PhotoLab.o DIPS.o FileIO.o Image.o
 
+PhotoLabTest: Test.o DIPS.o FileIO.o Image.o
+	gcc $(CFLAGS) -o PhotoLabTest Test.o DIPS.o FileIO.o Image.o
+
 PhotoLab.o: PhotoLab.c Constants.h
 	gcc $(CFLAGS) -c PhotoLab.c
+
+Test.o: Test.c Test.h
+	gcc $(CFLAGS) -c Test.c -o Test.o
 
 DIPS.o: DIPS.c DIPS.h Constants.h
 	gcc $(CFLAGS) -c DIPS.c -o DIPS.o
