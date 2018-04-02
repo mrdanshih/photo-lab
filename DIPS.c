@@ -101,6 +101,22 @@ IMAGE* Edge(IMAGE* image)
 	return image;
 }
 
+
+void swapRGB(IMAGE* image, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) 
+{
+	char redTemp = GetPixelR(image, x1, y1);
+	char greenTemp = GetPixelG(image, x1, y1);	
+	char blueTemp = GetPixelB(image, x1, y1);
+	
+	SetPixelR(image, x1, y1, GetPixelR(image, x2, y2));
+	SetPixelG(image, x1, y1, GetPixelG(image, x2, y2));
+	SetPixelB(image, x1, y1, GetPixelB(image, x2, y2));
+
+	SetPixelR(image, x2, y2, redTemp);
+	SetPixelG(image, x2, y2, greenTemp);
+	SetPixelB(image, x2, y2, blueTemp);
+}
+
 void swapBlocks(IMAGE* image, int firstBlockNum, int secondBlockNum)
 {
 	unsigned int blockWidth = ImageWidth(image) / SHUFF_WIDTH_DIV;
@@ -114,20 +130,7 @@ void swapBlocks(IMAGE* image, int firstBlockNum, int secondBlockNum)
 	
 	for(unsigned int y = 0; y < blockHeight; ++y) {
 		for(unsigned int x = 0; x < blockWidth; ++x) {
-			char redTemp = GetPixelR(image, firstBlockX + x, firstBlockY + y);
-			char greenTemp = GetPixelG(image, firstBlockX + x, firstBlockY + y);	
-			char blueTemp = GetPixelB(image, firstBlockX + x, firstBlockY + y);
-			
-			SetPixelR(image, firstBlockX + x, firstBlockY + y ,
-						 GetPixelR(image, secondBlockX + x, secondBlockY + y));
-			SetPixelG(image, firstBlockX + x, firstBlockY + y ,
-						 GetPixelG(image, secondBlockX + x, secondBlockY + y));
-			SetPixelB(image, firstBlockX + x, firstBlockY + y ,
-						 GetPixelB(image, secondBlockX + x, secondBlockY + y));
-
-			SetPixelR(image, secondBlockX + x, secondBlockY + y, redTemp);
-			SetPixelG(image, secondBlockX + x, secondBlockY + y, greenTemp);
-			SetPixelB(image, secondBlockX + x, secondBlockY + y, blueTemp);
+			swapRGB(image, firstBlockX + x, firstBlockY + y, secondBlockX + x, secondBlockY + y);
 		}
 	}
 }
@@ -156,6 +159,30 @@ IMAGE* Shuffle(IMAGE* image)
 	// Go through array in pairs and swap the blocks
 	for(unsigned int i = 0; i < 16; i += 2) {
 		swapBlocks(image, blocks[i], blocks[i + 1]);
+	}
+
+	return image;
+}
+
+IMAGE* VFlip(IMAGE* image)
+{
+	for(unsigned int y = 0; y < ImageHeight(image) / 2; ++y) {
+		for(unsigned int x = 0; x < ImageWidth(image); ++x) {
+			swapRGB(image, x, y, x, ImageHeight(image) - y - 1);
+		}
+	}
+
+	return image;
+}
+
+IMAGE* VMirror(IMAGE* image)
+{
+	for(unsigned int y = 0; y < ImageHeight(image) / 2; ++y) {
+		for(unsigned int x = 0; x < ImageWidth(image); ++x) {
+			SetPixelR(image, x, ImageHeight(image) - y - 1, GetPixelR(image, x, y));
+			SetPixelG(image, x, ImageHeight(image) - y - 1, GetPixelG(image, x, y));
+			SetPixelB(image, x, ImageHeight(image) - y - 1, GetPixelB(image, x, y));
+		}
 	}
 
 	return image;

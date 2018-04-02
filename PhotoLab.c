@@ -145,6 +145,11 @@ void executeCommand(int option, IMAGE** image)
 			Shuffle(*image);
 			printf("Shuffle operation is done!\n");
 			break;
+
+		case 8:
+			VFlip(*image);
+			printf("Vertical flip operation is done!\n");
+			break;
 	}
 }
 

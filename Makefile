@@ -1,6 +1,6 @@
 CFLAGS = -g -Wall
 
-all: PhotoLab
+all: PhotoLab PhotoLabTest
 
 PhotoLab: PhotoLab.o DIPS.o FileIO.o Image.o
 	gcc $(CFLAGS) -o PhotoLab PhotoLab.o DIPS.o FileIO.o Image.o

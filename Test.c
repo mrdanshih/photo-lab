@@ -72,29 +72,29 @@ int main(void) {
     DeleteImage(image);
     image = NULL;
 
-//     image = LoadImage(fname);
-//     if (! image) return 21;
-//     image = VFlip(image);
-//     if (! image) return 22;
-//     result = SaveImage("../TesterResult/vflip", image);
-//     if (result) return result;
-// #ifdef DEBUG
-//     printf("VFlip tested!\n\n");
-// #endif
-//     DeleteImage(image);
-//     image = NULL;
+    image = LoadImage(fname);
+    if (! image) return 21;
+    image = VFlip(image);
+    if (! image) return 22;
+    result = SaveImage("../TesterResult/vflip", image);
+    if (result) return result;
+#ifdef DEBUG
+    printf("VFlip tested!\n\n");
+#endif
+    DeleteImage(image);
+    image = NULL;
 
-//     image = LoadImage(fname);
-//     if (! image) return 23;
-//     image = VMirror(image);
-//     if (! image) return 24;
-//     result = SaveImage("../TesterResult/vmirror", image);
-//     if (result) return result;
-// #ifdef DEBUG
-//     printf("VMirror tested!\n\n");
-// #endif
-//     DeleteImage(image);
-//     image = NULL;
+    image = LoadImage(fname);
+    if (! image) return 23;
+    image = VMirror(image);
+    if (! image) return 24;
+    result = SaveImage("../TesterResult/vmirror", image);
+    if (result) return result;
+#ifdef DEBUG
+    printf("VMirror tested!\n\n");
+#endif
+    DeleteImage(image);
+    image = NULL;
 
 //     image = LoadImage(fname);
 //     if (! image) return 25;

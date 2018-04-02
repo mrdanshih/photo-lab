@@ -24,4 +24,10 @@ IMAGE* Edge(IMAGE* image);
 /* Shuffle the image */
 IMAGE* Shuffle(IMAGE* image);
 
+/* Flip image vertically */
+IMAGE* VFlip(IMAGE* image);
+
+/* Mirror image vertically */
+IMAGE* VMirror(IMAGE* image);
+
 #endif /* DIPS_H */
