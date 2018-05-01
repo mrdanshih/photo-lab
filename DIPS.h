@@ -30,4 +30,8 @@ IMAGE* VFlip(IMAGE* image);
 /* Mirror image vertically */
 IMAGE* VMirror(IMAGE* image);
 
+/* sharpen the image */
+IMAGE* Sharpen(IMAGE* image);
+
+
 #endif /* DIPS_H */

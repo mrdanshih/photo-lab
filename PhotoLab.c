@@ -18,12 +18,9 @@ void printMenu()
 			" 7:  Shuffle an image\n"
 			" 8:  Flip an image vertically\n"
 			" 9:  Mirror an image vertically\n"
-			" 10: Add border to the image\n"
-			" 11: Add noise to an image\n"
-			" 12: Sharpen an image\n"
-			" 13: Posterize an image\n"
-			" 14: Motion Blur\n"
-			" 15: Exit\n");
+			" 10: Sharpen an image\n"
+			" 11: Posterize an image\n"
+			" 12: Exit\n");
 }
 
 char* getFilenameInput(char* prompt)
@@ -111,7 +108,7 @@ void executeColorFilterCommand(IMAGE** image)
 void executeCommand(int option, IMAGE** image)
 {
 	// Check for NULL image for options that require a loaded image
-	if(option != 1 && option != 15 && *image == NULL) {
+	if(option != 1 && option != 12 && *image == NULL) {
 		printf("No image loaded to perform this operation!\n");
 		return;
 	}
@@ -150,6 +147,17 @@ void executeCommand(int option, IMAGE** image)
 			VFlip(*image);
 			printf("Vertical flip operation is done!\n");
 			break;
+
+		case 9:
+			VMirror(*image);
+			printf("Vertical mirror operation is done!\n");
+			break;
+
+		case 10:
+			Sharpen(*image);
+			printf("Sharpen operation is done!\n");
+			break;
+			
 	}
 }
 
@@ -167,11 +175,11 @@ int main(int argc, char** argv)
 		if(fgets(input, INPUT_LIMIT, stdin) && sscanf(input, "%d", &option)) {
 			executeCommand(option, &image);
 		} else {
-			printf("Invalid choice. Enter # from 1-15.\n");
+			printf("Invalid choice. Enter # from 1-12.\n");
 			option = 0;
 		}
 
-	} while(option != 15);
+	} while(option != 12);
 	
 	DeleteImage(image);
 	return 0;

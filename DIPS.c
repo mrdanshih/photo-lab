@@ -188,3 +188,23 @@ IMAGE* VMirror(IMAGE* image)
 	return image;
 }
 
+IMAGE* Sharpen(IMAGE* image)
+{
+	IMAGE* tempImage = CreateImage(ImageWidth(image), ImageHeight(image));
+
+	for(int y = 0; y < ImageHeight(image); ++y) {
+		for(int x = 0; x < ImageWidth(image); ++x) {
+			SetPixelR(tempImage, x, y, edgeNeighborSum(image, x, y, 'R', 9));
+			SetPixelG(tempImage, x, y, edgeNeighborSum(image, x, y, 'G', 9));
+			SetPixelB(tempImage, x, y, edgeNeighborSum(image, x, y, 'B', 9));
+		}
+	}
+
+	CopyImage(image, tempImage);
+	DeleteImage(tempImage);
+
+	return image;
+}
+
+
+
